@@ -85,11 +85,14 @@ module ErrbitJiraPlugin
       begin
         issue_title =  "[#{ problem.environment }][#{ problem.where }] #{problem.message.to_s.truncate(100)}".delete!("\n")
         issue_description = self.class.body_template.result(binding).unpack('C*').pack('U*')
-        issue = {"fields"=>{"summary"=>issue_title, "description"=>issue_description,"project"=>{"key"=>params['project_id']},"issuetype"=>{"id"=>"3"},"priority"=>{"name"=>params['issue_priority']}}}
-        
+
+        summary = issue_title.present? ? issue_title.to_s : 'An error was found'
+
+        issue = {"fields"=>{"summary"=>summary, "description"=>issue_description,"project"=>{"key"=>params['project_id']},"issuetype"=>{"id"=>"3"},"priority"=>{"name"=>params['issue_priority']}}}
+
         issue_build = client.Issue.build
         issue_build.save(issue)
-        
+
         problem.update_attributes(
           :issue_link => jira_url(issue_build.key),
           :issue_type => params['issue_type']
