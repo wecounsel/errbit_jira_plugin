@@ -60,7 +60,7 @@ module ErrbitJiraPlugin
 
     def errors
       errors = []
-      if self.class.fields.detect {|f| params[f[0]].blank? && !f[1][:optional]}
+      if self.class.fields.detect {|f| options[f[0]].blank? }
         errors << [:base, 'You must specify all non optional values!']
       end
       errors
