@@ -85,14 +85,14 @@ module ErrbitJiraPlugin
     end
 
     def client
-      options = {
+      _options = {
         :username => options['username'],
         :password => options['password'],
         :site => options['base_url'],
         :auth_type => :basic,
         :context_path => (options['context_path'] == '/') ? options['context_path'] = '' : options['context_path']
       }
-      JIRA::Client.new(options)
+      JIRA::Client.new(_options)
     end
 
     def create_issue(title, body, user: {})
