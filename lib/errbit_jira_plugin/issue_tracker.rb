@@ -46,6 +46,20 @@ module ErrbitJiraPlugin
       FIELDS
     end
 
+    def self.icons
+      @icons ||= {
+        create: [
+          'image/png', ErrbitJiraPlugin.read_static_file('jira_create.png')
+        ],
+        goto: [
+          'image/png', ErrbitJiraPlugin.read_static_file('jira_goto.png'),
+        ],
+        inactive: [
+          'image/png', ErrbitJiraPlugin.read_static_file('jira_inactive.png'),
+        ]
+      }
+    end
+
     def self.body_template
       @body_template ||= ERB.new(File.read(
         File.join(
@@ -81,14 +95,9 @@ module ErrbitJiraPlugin
       JIRA::Client.new(options)
     end
 
-    def create_issue(problem, reported_by = nil)
+    def create_issue(title, body, user: {})
       begin
-        issue_title =  "[#{ problem.environment }][#{ problem.where }] #{problem.message.to_s.truncate(100)}".delete!("\n")
-        issue_description = self.class.body_template.result(binding).unpack('C*').pack('U*')
-
-        summary = issue_title.present? ? issue_title.to_s : 'An error was found'
-
-        issue = {"fields"=>{"summary"=>summary, "description"=>issue_description,"project"=>{"key"=>options['project_id']},"issuetype"=>{"id"=>"3"},"priority"=>{"name"=>options['issue_priority']}}}
+        issue = {"fields"=>{"summary"=>title, "description"=>body,"project"=>{"key"=>options['project_id']},"issuetype"=>{"id"=>"3"},"priority"=>{"name"=>options['issue_priority']}}}
 
         issue_build = client.Issue.build
         issue_build.save(issue)
