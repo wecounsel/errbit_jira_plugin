@@ -104,7 +104,7 @@ module ErrbitJiraPlugin
 
         problem.update_attributes(
           :issue_link => jira_url(issue_build.key),
-          :issue_type => options['issue_type']
+          :issue_type => problem.issue_type
         )
 
       rescue JIRA::HTTPError
