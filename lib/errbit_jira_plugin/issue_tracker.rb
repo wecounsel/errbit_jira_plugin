@@ -6,33 +6,33 @@ module ErrbitJiraPlugin
 
     NOTE = 'Please configure Jira by entering the information below.'
 
-    FIELDS = [
-        [:base_url, {
-            :label => 'Jira URL without trailing slash',
-            :placeholder => 'https://jira.example.org'
-        }],
-        [:context_path, {
-            :optional => true,
-            :label => 'Context Path (Just "/" if empty otherwise with leading slash)',
-            :placeholder => "/jira"
-        }],
-        [:username, {
-            :label => 'Username',
-            :placeholder => 'johndoe'
-        }],
-        [:password, {
-            :label => 'Password',
-            :placeholder => 'p@assW0rd'
-        }],
-        [:project_id, {
-            :label => 'Project Key',
-            :placeholder => 'The project Key where the issue will be created'
-        }],
-        [:issue_priority, {
-            :label => 'Priority',
-            :placeholder => 'Normal'
-        }]
-    ]
+    FIELDS = {
+      :base_url => {
+          :label => 'Jira URL without trailing slash',
+          :placeholder => 'https://jira.example.org'
+      },
+      :context_path => {
+          :optional => true,
+          :label => 'Context Path (Just "/" if empty otherwise with leading slash)',
+          :placeholder => "/jira"
+      },
+      :username => {
+          :label => 'Username',
+          :placeholder => 'johndoe'
+      },
+      :password => {
+          :label => 'Password',
+          :placeholder => 'p@assW0rd'
+      },
+      :project_id => {
+          :label => 'Project Key',
+          :placeholder => 'The project Key where the issue will be created'
+      },
+      :issue_priority => {
+          :label => 'Priority',
+          :placeholder => 'Normal'
+      }
+    }
 
     def self.label
       LABEL
