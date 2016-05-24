@@ -119,5 +119,11 @@ module ErrbitJiraPlugin
     def url
       options['base_url']
     end
+
+    private
+
+    def params
+      options
+    end
   end
 end
