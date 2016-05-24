@@ -13,7 +13,7 @@ module ErrbitJiraPlugin
       },
       :context_path => {
           :optional => true,
-          :label => 'Context Path (Just "/" if empty otherwise with leading slash)',
+          :label => 'Context Path',
           :placeholder => "/jira"
       },
       :username => {
@@ -117,9 +117,9 @@ module ErrbitJiraPlugin
     end
 
     def jira_url(project_id)
-      "#{params['base_url']}#{params['context_path']}browse/#{project_id}"
+      "#{options['base_url']}#{context_path}browse/#{project_id}"
     end
-    
+
     def url
       options['base_url']
     end
@@ -127,7 +127,7 @@ module ErrbitJiraPlugin
     private
 
     def context_path
-      options['context_path'] == '/' ? '' : options['context_path']
+      options['context_path'] == '' ? '/' : options['context_path']
     end
 
     def params
