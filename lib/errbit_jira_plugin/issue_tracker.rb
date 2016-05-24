@@ -97,10 +97,18 @@ module ErrbitJiraPlugin
 
     def create_issue(title, body, user: {})
       begin
-        issue = {"fields"=>{"summary"=>title, "description"=>body,"project"=>{"key"=>options['project_id']},"issuetype"=>{"id"=>"3"},"priority"=>{"name"=>options['issue_priority']}}}
+        issue_fields =  {
+                          "fields" => {
+                            "summary" => title,
+                            "description" => body,
+                            "project"=> {"key"=>options['project_id']},
+                            "issuetype"=>{"id"=>"3"},
+                            "priority"=>{"name"=>options['issue_priority']}
+                          }
+                        }
+        jira_issue = client.Issue.build
 
-        issue_build = client.Issue.build
-        issue_build.save(issue)
+        issue_build.save(issue_fields)
 
         jira_url(issue_build.key)
       rescue JIRA::HTTPError
@@ -121,6 +129,10 @@ module ErrbitJiraPlugin
     end
 
     private
+
+    def build_issue_fields(title, body)
+
+    end
 
     def params
       options
