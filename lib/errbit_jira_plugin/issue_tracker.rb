@@ -84,7 +84,7 @@ module ErrbitJiraPlugin
       false
     end
 
-    def client
+    def jira_client
       jira_options = {
         :username => options['username'],
         :password => options['password'],
@@ -97,12 +97,15 @@ module ErrbitJiraPlugin
 
     def create_issue(title, body, user: {})
       begin
-        issue_fields =  
+        client = jira_client
+        project = client.Project.find(options['project_id'])
+
+        issue_fields =
           {
             "fields" => {
               "summary" => title,
               "description" => body,
-              "project"=> {"key"=>options['project_id']},
+              "project"=> {"id"=> project.id},
               "issuetype"=>{"id"=>"3"},
               "priority"=>{"name"=>options['issue_priority']}
             }
@@ -112,7 +115,7 @@ module ErrbitJiraPlugin
 
         jira_issue.save(issue_fields)
 
-        jira_url(params['project_id'])
+        jira_url(project.id)
       rescue JIRA::HTTPError
         raise ErrbitJiraPlugin::IssueError, "Could not create an issue with Jira.  Please check your credentials."
       end
