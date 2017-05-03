@@ -90,17 +90,16 @@ module ErrbitJiraPlugin
 
     def create_issue(title, body, user: {})
       begin
-        client = jira_client
-        project = client.Project.find(options['project_id'])
+        project = jira_client.Project.find(options['project_id'])
 
         issue_fields =
           {
             "fields" => {
-              "summary" => title,
+              "summary"     => title[0...50],
               "description" => body,
-              "project"=> {"id"=> project.id},
-              "issuetype"=>{"id"=>"3"},
-              "priority"=>{"name"=>options['issue_priority']}
+              "project"     => {"id"   => project.id},
+              "issuetype"   => {"id"   => issue_type_for(params['issue_type'])&.id},
+              "priority"    => {"name" => options['issue_priority']}
             }
           }
 
