@@ -31,6 +31,10 @@ module ErrbitJiraPlugin
       :issue_priority => {
           :label => 'Priority',
           :placeholder => 'Normal'
+      },
+      :issue_type => {
+          :label => 'Issue Type',
+          :placeholder => 'Bug'
       }
     }
 
@@ -84,17 +88,6 @@ module ErrbitJiraPlugin
       false
     end
 
-    def jira_client
-      jira_options = {
-        :username => options['username'],
-        :password => options['password'],
-        :site => options['base_url'],
-        :auth_type => :basic,
-        :context_path => context_path
-      }
-      JIRA::Client.new(jira_options)
-    end
-
     def create_issue(title, body, user: {})
       begin
         client = jira_client
@@ -111,7 +104,7 @@ module ErrbitJiraPlugin
             }
           }
 
-        jira_issue = client.Issue.build
+        jira_issue = jira_client.Issue.build
 
         jira_issue.save(issue_fields)
 
@@ -125,14 +118,30 @@ module ErrbitJiraPlugin
       "#{options['base_url']}#{context_path}browse/#{project_id}"
     end
 
-    def url
-      options['base_url']
-    end
-
     private
 
     def context_path
       options['context_path'] == '' ? '/' : options['context_path']
+    end
+
+    def issue_type_for(type)
+      types.select{|t| t.name == type}.first
+    end
+
+    def issue_types
+      @issue_types ||= jira_client.Issuetype.all
+    end
+
+    def jira_client
+      jira_options = {
+        :username => options['username'],
+        :password => options['password'],
+        :site => options['base_url'],
+        :auth_type => :basic,
+        :context_path => context_path
+      }
+
+      @jira_client ||= JIRA::Client.new(jira_options)
     end
 
     def params
