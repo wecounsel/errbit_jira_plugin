@@ -125,7 +125,7 @@ module ErrbitJiraPlugin
     end
 
     def issue_type_for(type)
-      types.select{|t| t.name == type}.first
+      issue_types.select{|t| t.name == type}.first
     end
 
     def issue_types
