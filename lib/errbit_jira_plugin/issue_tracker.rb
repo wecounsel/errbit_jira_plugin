@@ -98,7 +98,7 @@ module ErrbitJiraPlugin
               "summary"     => title[0...50],
               "description" => body,
               "project"     => {"id"   => project.id},
-              "issuetype"   => {"id"   => issue_type_for(params['issue_type'])&.id},
+              "issuetype"   => {"id"   => issue_type_for(options['issue_type'])&.id},
               "priority"    => {"name" => options['issue_priority']}
             }
           }
@@ -107,9 +107,13 @@ module ErrbitJiraPlugin
 
         jira_issue.save(issue_fields)
 
-        jira_url(project.id)
-      rescue JIRA::HTTPError
-        raise ErrbitJiraPlugin::IssueError, "Could not create an issue with Jira.  Please check your credentials."
+        jira_url(jira_issue.key)
+      rescue JIRA::HTTPError => e
+        if e.response&.body
+          raise ErrbitJiraPlugin::IssueError, "Could not create an issue with Jira. #{e.response.body}"
+        else
+          raise ErrbitJiraPlugin::IssueError, "Could not create an issue with Jira.  Please check your credentials."
+        end
       end
     end
 
