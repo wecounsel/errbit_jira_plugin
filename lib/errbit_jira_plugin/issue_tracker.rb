@@ -121,6 +121,10 @@ module ErrbitJiraPlugin
       "#{options['base_url']}#{context_path}browse/#{project_id}"
     end
 
+    def url
+      options['base_url']
+    end
+
     private
 
     def context_path
