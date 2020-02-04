@@ -146,9 +146,5 @@ module ErrbitJiraPlugin
 
       @jira_client ||= JIRA::Client.new(jira_options)
     end
-
-    def params
-      options
-    end
   end
 end
