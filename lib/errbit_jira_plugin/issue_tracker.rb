@@ -141,10 +141,11 @@ module ErrbitJiraPlugin
 
     def jira_client
       jira_options = {
-        :username => options['username'],
-        :password => options['password'],
-        :site => options['base_url'],
-        :auth_type => :basic,
+        :username     => options['username'],
+        :password     => options['password'],
+        :site         => options['base_url'],
+        :auth_type    => :cookie,  # Set cookie based authentication
+        :use_cookies  => true,     # Send cookies with each request
         :context_path => context_path
       }
 
