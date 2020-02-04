@@ -96,7 +96,7 @@ module ErrbitJiraPlugin
           {
             "fields" => {
               "summary"     => title[0...50],
-              "description" => body,
+              "description" => body[0...200],
               "project"     => {"id"   => project.id},
               "issuetype"   => {"id"   => issue_type_for(options['issue_type'])&.id},
               "priority"    => {"name" => options['issue_priority']}
