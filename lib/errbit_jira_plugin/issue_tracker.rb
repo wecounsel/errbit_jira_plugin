@@ -13,7 +13,7 @@ module ErrbitJiraPlugin
       },
       :context_path => {
           :optional => true,
-          :label => 'Context Path',
+          :label => 'Context Path (optional)',
           :placeholder => "/jira"
       },
       :username => {
@@ -78,7 +78,7 @@ module ErrbitJiraPlugin
 
     def errors
       errors = []
-      if self.class.fields.detect {|f| options[f[0]].blank? }
+      if self.class.fields.detect {|f| options[f[0]].blank? && !options['context_path'] }
         errors << [:base, 'You must specify all non optional values!']
       end
       errors
@@ -96,7 +96,7 @@ module ErrbitJiraPlugin
           {
             "fields" => {
               "summary"     => title[0...50],
-              "description" => body[0...200],
+              "description" => atlassian_document_format(body),
               "project"     => {"id"   => project.id},
               "issuetype"   => {"id"   => issue_type_for(options['issue_type'])&.id},
               "priority"    => {"name" => options['issue_priority']}
@@ -105,7 +105,7 @@ module ErrbitJiraPlugin
 
         jira_issue = jira_client.Issue.build
 
-        jira_issue.save(issue_fields)
+        jira_issue.save!(issue_fields)
 
         jira_url(jira_issue.key)
       rescue JIRA::HTTPError => e
@@ -127,6 +127,24 @@ module ErrbitJiraPlugin
 
     private
 
+    def atlassian_document_format(original_body)
+      {
+        "version": 1,
+        "type": "doc",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": original_body
+              }
+            ]
+          }
+        ]
+      }
+    end
+
     def context_path
       options['context_path'] == '' ? '/' : options['context_path']
     end
@@ -141,12 +159,12 @@ module ErrbitJiraPlugin
 
     def jira_client
       jira_options = {
-        :username     => options['username'],
-        :password     => options['password'],
-        :site         => options['base_url'],
-        :auth_type    => :cookie,  # Set cookie based authentication
-        :use_cookies  => true,     # Send cookies with each request
-        :context_path => context_path
+        :username       => options['username'],
+        :password       => options['password'],
+        :site           => options['base_url'],
+        :rest_base_path => '/rest/api/3',
+        :auth_type      => :basic,
+        :context_path   => options['context_path']
       }
 
       @jira_client ||= JIRA::Client.new(jira_options)
