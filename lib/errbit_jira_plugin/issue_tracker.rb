@@ -21,8 +21,8 @@ module ErrbitJiraPlugin
           :placeholder => 'johndoe'
       },
       :password => {
-          :label => 'Password',
-          :placeholder => 'p@assW0rd'
+          :label => 'User API Token',
+          :placeholder => 'abc123'
       },
       :project_id => {
           :label => 'Project Key',
